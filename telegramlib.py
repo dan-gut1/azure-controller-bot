@@ -1,7 +1,7 @@
 from telegram.ext import Updater, CommandHandler
 import logging
 
-API_TOKEN = "1986898545:AAHItmiB0uhjTw4meUrPvq8aasRKyPMw60Q"
+API_TOKEN = "api_token"
 
 
 class TelegramBot:
