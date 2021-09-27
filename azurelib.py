@@ -2,6 +2,7 @@
 from azure.identity import ClientSecretCredential
 from azure.mgmt.compute import ComputeManagementClient
 import json
+import os
 
 
 # Azure Datacenter
@@ -26,6 +27,7 @@ VM_NAME = 'gns'
 class AzureHandler:
 
     def __init__(self):
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
         self.credential_param = self.load_credential_param()
         self.credential = ClientSecretCredential(tenant_id=self.credential_param["tenant_id"],
                                                  client_id=self.credential_param["client_id"],
@@ -62,7 +64,7 @@ class AzureHandler:
 
     def load_credential_param(self):
         """in order to hide azure secretes load the secret from a local file"""
-        with open(r"/azure_credential_param.json", "r") as credential_file:
+        with open(r"./azure_credential_param.json", "r") as credential_file:
             credential_param = json.load(credential_file)
 
         return credential_param
