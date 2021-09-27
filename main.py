@@ -76,11 +76,13 @@ def send_rereg_request(context: CallbackContext):
     """Sends to all registered users whom still uses to re-register"""
     print("send re-reg requests")
     for validating_user in context.bot_data["users"].values():
-        if validating_user["registered"]:
+        current_user_log_time = time.time() - validating_user["last_login"]
+        # If user is registered, send re-register notification if user "last_log" is higher eq then SEND_RENEW_REG
+        if validating_user["registered"] and current_user_log_time >= SEND_RENEW_REG:
             context.bot.send_message(chat_id=validating_user["user_id"],
                                      text="Dear user, please re-register yourself in the next 5 minutes"
-                                          " in order to keep the vm up and running.\n if you just"
-                                          " registered ignore this message.")
+                                          " in order to keep the vm up and running.\n you are logged for: %d minutes."
+                                          % int(current_user_log_time / 60))
 
 
 def automated_stop_vm(context: CallbackContext):
