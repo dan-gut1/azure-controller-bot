@@ -15,13 +15,14 @@ def help(update, context):
     """help command to explain how the bot works
     """
     context.bot.send_message(chat_id=update.effective_chat.id,
-                             text="Welcome to Azure controller, read carefully in order to keep your work safe.\n"
+                             text="Welcome to Azure controller.\n"
+                                  "Read carefully in order to keep your work safe.\n"
                                   "1. In order to keep the vm running you must register by /reg or /vmstart commands.\n"
                                   "2. If you registered, every 25 minutes the bot will ask you to re-register.\n"
-                                  "3. If you most responds within 5 minutes, if you \"away form keyboard\" more then 30"
-                                  " minutes you will be logged-out."
-                                  "4. If no user didn't respond and didn't re-registered them-self's within 30"
-                                  " minute period the vm will be automatically shutdown.")
+                                  "3. You most responds within 5 minutes, if you \"away form keyboard\" more then 30"
+                                  " minutes you will be logged-out.\n"
+                                  "4. If no user respond and didn't re-registered them-self's within 30"
+                                  " minute period the vm will be shutdown automatically.")
 
 
 def vm_start(update, context):
