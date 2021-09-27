@@ -5,7 +5,7 @@ from telegramlib import TelegramBot
 from telegram.ext import CommandHandler, Filters, CallbackContext, Job
 from azurelib import AzureHandler
 import json
-
+import os
 # from telegram.ext import Updater, CommandHandler, CallbackContext
 USER_IS_AFK = 1800  # 30 minutes in seconds
 SEND_RENEW_REG = 1500  # 25 minutes in seconds
@@ -112,7 +112,7 @@ def load_json():
     """load json file and returns a dict
     :rtype: dict
     """
-    with open(r"/allowed_users.json", "r") as allowed_users_file:
+    with open(r"allowed_users.json", "r") as allowed_users_file:
         allowed_users_dict = json.load(allowed_users_file)
     return allowed_users_dict
 
@@ -132,6 +132,7 @@ def load_allowed_users():
 
 
 def main():
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
     allowed_user_ids = load_allowed_users()
     tel_bot = TelegramBot()
     tel_bot.dispatcher.bot_data["users"] = load_json()
