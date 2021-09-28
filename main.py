@@ -78,11 +78,15 @@ def send_rereg_request(context: CallbackContext):
     for validating_user in context.bot_data["users"].values():
         current_user_log_time = time.time() - validating_user["last_login"]
         # If user is registered, send re-register notification if user "last_log" is higher eq then SEND_RENEW_REG
-        if validating_user["registered"] and int(current_user_log_time) >= SEND_RENEW_REG:
+        if validating_user["registered"] and int(current_user_log_time) >= SEND_RENEW_REG - (5 * 60):
             context.bot.send_message(chat_id=validating_user["user_id"],
                                      text="Dear user, please re-register yourself in the next 5 minutes"
                                           " in order to keep the vm up and running.\n"
                                           " you are logged for: %d minutes." % (int(current_user_log_time) / 60))
+        # create shutdown job only if at last one user is
+        # Syncing auto stop to re-register.
+        context.job_queue.jobs()
+    context.job_queue.run_once(callback=automated_stop_vm, when=(60*5), context=Job.context, name="auto_vm_stop")
 
 
 def automated_stop_vm(context: CallbackContext):
@@ -152,10 +156,8 @@ def main():
                                                           Filters.user(allowed_user_ids)))
 
     # current_jobs = tel_bot.updater.job_queue.get_jobs_by_name(__name__)
-    tel_bot.updater.job_queue.run_repeating(callback=send_rereg_request, interval=SEND_RENEW_REG, first=None,
+    tel_bot.updater.job_queue.run_repeating(callback=send_rereg_request, interval=SEND_RENEW_REG, first=SEND_RENEW_REG,
                                             last=9999999999, context=Job.context, name="send_registering_request")
-    tel_bot.updater.job_queue.run_repeating(callback=automated_stop_vm, interval=USER_IS_AFK, first=None,
-                                            last=9999999999, context=Job.context, name="auto_vm_stop")
     tel_bot.updater.job_queue.start()
     tel_bot.updater.start_polling()
     tel_bot.updater.idle()
