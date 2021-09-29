@@ -1,4 +1,4 @@
-from telegram.ext import Updater, CommandHandler
+from telegram.ext import Updater, CommandHandler, CallbackContext
 import logging
 
 API_TOKEN = "api_token"
@@ -11,12 +11,15 @@ class TelegramBot:
         self.dispatcher = self.updater.dispatcher
         logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                             level=logging.INFO)
-        self.start_handler = CommandHandler('start', self.start)
-        self.dispatcher.add_handler(self.start_handler)
+        self.dispatcher.add_handler(CommandHandler('start', self.start))
+        self.dispatcher.add_handler(CommandHandler('userid', self.get_userid))
 
     def start(self, update, context):
         context.bot.send_message(chat_id=update.effective_chat.id, text="welcome to validation's azure manager."
                                                                         " type /help for commands")
+
+    def get_userid(self, update, context: CallbackContext):
+        update.message.reply_text("You user ID: %d" % update.message.chat_id)
 
 
 def main():
