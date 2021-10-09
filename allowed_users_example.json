@@ -1,3 +1,3 @@
 {
-  "name_of_user":{"user_id": int(telegram_user_id_int), "registered": false, "last_login": "time.time"}
+  "name_of_user":{"user_id": telegram_user_id_int, "registered": bool, "last_login": 0.0}
 }
