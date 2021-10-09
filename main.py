@@ -1,12 +1,12 @@
 # #!/usr/bin/python
-import time
 
+import os
+import json
+import time
+from azurelib import AzureHandler
 from telegramlib import TelegramBot
 from telegram.ext import CommandHandler, Filters, CallbackContext, Job
-from azurelib import AzureHandler
-import json
-import os
-# from telegram.ext import Updater, CommandHandler, CallbackContext
+
 USER_IS_AFK = 1800  # 30 minutes in seconds
 SEND_RENEW_REG = 1500  # 25 minutes in seconds
 

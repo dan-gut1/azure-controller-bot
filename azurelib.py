@@ -1,8 +1,8 @@
 
+import os
+import json
 from azure.identity import ClientSecretCredential
 from azure.mgmt.compute import ComputeManagementClient
-import json
-import os
 
 
 # Azure Datacenter
@@ -11,16 +11,7 @@ LOCATION = 'eastus'
 # Resource Group
 GROUP_NAME = 'Validation'
 
-# Network
-VNET_NAME = 'azure-sample-vnet'
-SUBNET_NAME = 'azure-sample-subnet'
-
 # VM
-OS_DISK_NAME = 'azure-sample-osdisk'
-IP_CONFIG_NAME = 'azure-sample-ip-config'
-NIC_NAME = 'azure-sample-nic'
-USERNAME = 'userlogin'
-PASSWORD = 'Pa$$w0rd91'
 VM_NAME = 'gns'
 
 
@@ -35,26 +26,16 @@ class AzureHandler:
         self.compute_client = ComputeManagementClient(self.credential, self.credential_param["subscription_id"])
         self.users = {}
 
-    def __enter__(self):
-        self.azure = self.__init__()
-        return self.azure
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        pass
-
     def start_vm(self):
-        async_vm_start = self.compute_client.virtual_machines.begin_start(
-            GROUP_NAME, VM_NAME)
+        async_vm_start = self.compute_client.virtual_machines.begin_start(GROUP_NAME, VM_NAME)
         async_vm_start.wait(async_vm_start.done())
 
     def stop_vm(self):
-        async_vm_stop = self.compute_client.virtual_machines.begin_deallocate(
-            GROUP_NAME, VM_NAME)
+        async_vm_stop = self.compute_client.virtual_machines.begin_deallocate(GROUP_NAME, VM_NAME)
         async_vm_stop.wait(async_vm_stop.done())
 
     def reset_vm(self):
-        async_vm_restart = self.compute_client.virtual_machines.begin_restart(
-            GROUP_NAME, VM_NAME)
+        async_vm_restart = self.compute_client.virtual_machines.begin_restart(GROUP_NAME, VM_NAME)
         async_vm_restart.wait(async_vm_restart.done())
 
     def vm_state(self):

@@ -1,5 +1,5 @@
-from telegram.ext import Updater, CommandHandler, CallbackContext
 import logging
+from telegram.ext import Updater, CommandHandler, CallbackContext
 
 API_TOKEN = "api_token"
 
