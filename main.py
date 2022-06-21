@@ -32,7 +32,6 @@ def announce(update, context):
 
 
 def vm_start(update, context):
-    #vm = context.bot_data["azure_handler"]
     with AzureHandler() as vm:
         reg_user(update, context)
 
@@ -47,7 +46,6 @@ def vm_start(update, context):
 
 def vm_stop(update, context):
     with AzureHandler() as vm:
-        #vm = context.bot_data["azure_handler"]
         update.message.reply_text("shutting down vm")
         print('\nStop VM')
         vm.stop_vm()
@@ -56,7 +54,6 @@ def vm_stop(update, context):
 
 def vm_stat(update, context):
     with AzureHandler() as vm:
-        #vm = context.bot_data["azure_handler"]
         print("stat vm")
         vm_state = vm.vm_state()
         update.message.reply_text(vm_state)
@@ -64,7 +61,6 @@ def vm_stat(update, context):
 
 def vm_rest(update, context):
     with AzureHandler() as vm:
-        #vm = context.bot_data["azure_handler"]
         print('\nRestart VM')
         update.message.reply_text("resetting vm")
         vm.reset_vm()
@@ -108,7 +104,6 @@ def automated_stop_vm(context: CallbackContext):
      if no one answered stopping the vm"""
     count_online_users = 0
     user_dict = context.bot_data["users"]
-    #vm = context.bot_data["azure_handler"]
     with AzureHandler() as vm:
         # Span over registered users and checks if need to log them off.
         for username in user_dict.keys():
