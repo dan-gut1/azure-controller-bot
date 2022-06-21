@@ -1,16 +1,17 @@
 import logging
-from telegram.ext import Updater, CommandHandler, CallbackContext
+from telegram.ext import Updater, CommandHandler, Filters, CallbackContext, Job
 
-API_TOKEN = "api_token"
+API_TOKEN = "1986898545:AAF3xhgNRkQmziDPmrnLE_gEDDKc0oM-lsU"
 
 
 class TelegramBot:
     def __init__(self):
         print("init telegrambot")
+        #logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+        self.filetrs = Filters
+        self.job = Job
         self.updater = Updater(token=API_TOKEN, use_context=True)
         self.dispatcher = self.updater.dispatcher
-        logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                            level=logging.INFO)
         self.dispatcher.add_handler(CommandHandler('start', self.start))
         self.dispatcher.add_handler(CommandHandler('userid', self.get_userid))
 
