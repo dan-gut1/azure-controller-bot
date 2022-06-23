@@ -26,6 +26,14 @@ class AzureHandler:
         self.compute_client = ComputeManagementClient(self.credential, self.credential_param["subscription_id"])
         self.users = {}
 
+    def __enter__(self):
+        self.azure_env = AzureHandler()
+        return self.azure_env
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        self.compute_client.close()
+        print("closees")
+
     def start_vm(self):
         async_vm_start = self.compute_client.virtual_machines.begin_start(GROUP_NAME, VM_NAME)
         async_vm_start.wait(async_vm_start.done())
@@ -61,6 +69,9 @@ class AzureHandler:
             return True
         else:
             return False
+
+    def close(self):
+        exit()
 
 
 def main():
