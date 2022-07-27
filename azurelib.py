@@ -20,9 +20,8 @@ class AzureHandler:
         self.compute_client = ComputeManagementClient(self.credential, self.credential_param[self.vm_name]["subscription_id"])
 
 
-    def __enter__(self, vm_name):
-        self.azure_env = AzureHandler(vm_name)
-        return self.azure_env
+    def __enter__(self):
+        return self
 
 
     def __exit__(self, exception_type, exception_value, traceback):
@@ -74,10 +73,10 @@ class AzureHandler:
 
 def main():
     # main func for functinality testing.
-    vm = AzureHandler("vm_name")
-    vm.stop_vm()
-    sleep(5)
-    print(f"{vm.vm_state()}")
+    with AzureHandler("gns") as vm: 
+        vm.stop_vm()
+        sleep(5)
+        print(f"{vm.vm_state()}")
 
 
 if __name__ == '__main__':
