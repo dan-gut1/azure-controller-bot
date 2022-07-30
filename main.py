@@ -3,7 +3,6 @@
 import os
 import json
 import time
-
 from azurelib import AzureHandler
 from telegramlib import TelegramBot
 from telegram.ext import Updater, CommandHandler, Filters, CallbackContext, Job
@@ -11,6 +10,7 @@ from telegram.ext import Updater, CommandHandler, Filters, CallbackContext, Job
 USER_IS_AFK = 1800  # 30 minutes in seconds
 SEND_RENEW_REG = 1500  # 25 minutes in seconds
 LAST_JOB_RUN = 9999999999  # the last time job should run, needs to be infinite.
+DEFAULT_VM_NAME = "default vm name goes here"
 
 
 def help(update: Updater, context: CallbackContext):
@@ -34,7 +34,7 @@ def announce(update: Updater, context: CallbackContext):
 
 def vm_start(update: Updater, context: CallbackContext):
     try:
-        vm_name = "default vm name"
+        vm_name = DEFAULT_VM_NAME
         if context.args:
             vm_name = context.args[0]
         with AzureHandler(vm_name) as vm:
@@ -53,7 +53,7 @@ def vm_start(update: Updater, context: CallbackContext):
 
 def vm_stop(update: Updater, context: CallbackContext):
     try: 
-        vm_name = "default vm name"
+        vm_name = DEFAULT_VM_NAME
         if context.args:
             vm_name = context.args[0]
         with AzureHandler(vm_name) as vm:
@@ -67,7 +67,7 @@ def vm_stop(update: Updater, context: CallbackContext):
 
 def vm_stat(update: Updater, context: CallbackContext):
     try:
-        vm_name = "default vm name"
+        vm_name = DEFAULT_VM_NAME
         if context.args:
             vm_name = context.args[0]
         with AzureHandler(vm_name) as vm:
@@ -79,7 +79,7 @@ def vm_stat(update: Updater, context: CallbackContext):
 
 def vm_rest(update: Updater, context: CallbackContext):
     try:
-        vm_name = "default vm name"
+        vm_name = DEFAULT_VM_NAME
         if context.args:
             vm_name = context.args[0]
         with AzureHandler(vm_name) as vm:
