@@ -12,6 +12,8 @@ class AzureHandler:
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
         self.vm_name = vm_name
         self.credential_param = self.load_credential_param()
+        if self.vm_name not in self.credential_param.keys():
+            raise KeyError(f"Can't find Azure VM called: {self.vm_name}")
         self.locataion = self.credential_param[self.vm_name]["location"]
         self.resource_group_name = self.credential_param[self.vm_name]["group_name"]
         self.credential = ClientSecretCredential(tenant_id=self.credential_param[self.vm_name]["tenant_id"],
@@ -77,6 +79,9 @@ def main():
         vm.stop_vm()
         sleep(5)
         print(f"{vm.vm_state()}")
+        vm.reset_vm()
+        print(f"{vm.vm_state()}")
+
 
 
 if __name__ == '__main__':
