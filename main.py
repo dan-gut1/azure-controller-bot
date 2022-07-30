@@ -5,14 +5,15 @@ import json
 import time
 from azurelib import AzureHandler
 from telegramlib import TelegramBot
-from telegram.ext import CommandHandler, Filters, CallbackContext, Job
+from telegram.ext import Updater, CommandHandler, Filters, CallbackContext, Job
 
 USER_IS_AFK = 1800  # 30 minutes in seconds
 SEND_RENEW_REG = 1500  # 25 minutes in seconds
 LAST_JOB_RUN = 9999999999  # the last time job should run, needs to be infinite.
+DEFAULT_VM_NAME = "default vm name goes here"
 
 
-def help(update, context):
+def help(update: Updater, context: CallbackContext):
     """help command to explain how the bot works
     """
     context.bot.send_message(chat_id=update.effective_chat.id,
@@ -26,45 +27,70 @@ def help(update, context):
                                   " minute period the vm will be shutdown automatically.")
 
 
-def announce(update, context):
+def announce(update: Updater, context: CallbackContext):
     for user in context.bot_data["users"]:
         context.bot.send_message(chat_id=user["user_id"], text=context.arg[1])
 
 
-def vm_start(update, context):
-    with AzureHandler("gns") as vm:
-        reg_user(update, context)
+def vm_start(update: Updater, context: CallbackContext):
+    try:
+        vm_name = DEFAULT_VM_NAME
+        if context.args:
+            vm_name = context.args[0]
+        with AzureHandler(vm_name) as vm:
+            reg_user(update, context)
 
-        if not vm.is_vm_running():
-            update.message.reply_text("starting vm")
-            print('\nStart VM')
-            vm.start_vm()
-            update.message.reply_text("start-up completed")
-        else:
-            update.message.reply_text("VM is already running.")
-
-
-def vm_stop(update, context):
-    with AzureHandler("gns") as vm:
-        update.message.reply_text("shutting down vm")
-        print('\nStop VM')
-        vm.stop_vm()
-        update.message.reply_text("shutdown completed")
+            if not vm.is_vm_running():
+                update.message.reply_text("starting vm")
+                print('\nStart VM')
+                vm.start_vm()
+                update.message.reply_text("start-up completed")
+            else:
+                update.message.reply_text("VM is already running.")
+    except KeyError as e:
+        update.message.reply_text(f'Error starting VM: {e}')
 
 
-def vm_stat(update, context):
- with AzureHandler("gns") as vm:
-        print("stat vm")
-        vm_state = vm.vm_state()
-        update.message.reply_text(vm_state)
+def vm_stop(update: Updater, context: CallbackContext):
+    try: 
+        vm_name = DEFAULT_VM_NAME
+        if context.args:
+            vm_name = context.args[0]
+        with AzureHandler(vm_name) as vm:
+            update.message.reply_text("shutting down vm")
+            print('\nStop VM')
+            vm.stop_vm()
+            update.message.reply_text("shutdown completed")
+    except KeyError as e:
+        update.message.reply_text(f'Error stoping VM: {e}')
 
 
-def vm_rest(update, context):
-    with AzureHandler("gns") as vm:
-        print('\nRestart VM')
-        update.message.reply_text("resetting vm")
-        vm.reset_vm()
-        update.message.reply_text("vm reboot command sent")
+def vm_stat(update: Updater, context: CallbackContext):
+    try:
+        vm_name = DEFAULT_VM_NAME
+        if context.args:
+            vm_name = context.args[0]
+        with AzureHandler(vm_name) as vm:
+            print("stat vm")
+            vm_state = vm.vm_state()
+            update.message.reply_text(vm_state)
+    except KeyError as e:
+        update.message.reply_text(f'Error checking VM status: {e}')
+
+def vm_rest(update: Updater, context: CallbackContext):
+    try:
+        vm_name = DEFAULT_VM_NAME
+        if context.args:
+            vm_name = context.args[0]
+        with AzureHandler(vm_name) as vm:
+            print('\nRestart VM')
+            update.message.reply_text("resetting vm")
+            vm.reset_vm()
+            update.message.reply_text("vm reboot command sent")
+    except KeyError as e:
+        update.message.reply_text(f'Error restarting VM: {e}')
+    except Exception as e:
+        update.message.reply_text(f'{e}')
 
 
 def reg_user(update, context: CallbackContext):
@@ -104,7 +130,7 @@ def automated_stop_vm(context: CallbackContext):
      if no one answered stopping the vm"""
     count_online_users = 0
     user_dict = context.bot_data["users"]
-    with AzureHandler("gns") as vm:
+    with AzureHandler("vm_name") as vm:
         # Span over registered users and checks if need to log them off.
         for username in user_dict.keys():
             if user_dict[username]["registered"]:
@@ -160,6 +186,8 @@ def main():
     tel_bot.updater.dispatcher.add_handler(CommandHandler('vmstop', vm_stop,
                                                           Filters.user(allowed_user_ids)))
     tel_bot.updater.dispatcher.add_handler(CommandHandler('vmstat', vm_stat,
+                                                          Filters.user(allowed_user_ids)))
+    tel_bot.updater.dispatcher.add_handler(CommandHandler('vmreset', vm_rest,
                                                           Filters.user(allowed_user_ids)))
     tel_bot.updater.dispatcher.add_handler(CommandHandler('reg', reg_user,
                                                           Filters.user(allowed_user_ids)))
