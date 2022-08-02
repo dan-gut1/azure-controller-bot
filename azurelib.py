@@ -2,7 +2,6 @@
 import os
 import json
 from time import sleep
-from tokenize import group
 from azure.identity import ClientSecretCredential
 from azure.mgmt.compute import ComputeManagementClient
 
@@ -10,10 +9,10 @@ class AzureHandler:
 
     def __init__(self, vm_name: str):
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
-        self.vm_name = vm_name
         self.credential_param = self.load_credential_param()
-        if self.vm_name not in self.credential_param.keys():
-            raise KeyError(f"Can't find Azure VM called: {self.vm_name}")
+        if vm_name not in self.credential_param.keys():
+            raise KeyError(f"Can't find Azure VM or account called: {vm_name} in azure_param file")
+        self.vm_name = self.credential_param[vm_name]["vm_name"]
         self.locataion = self.credential_param[self.vm_name]["location"]
         self.resource_group_name = self.credential_param[self.vm_name]["group_name"]
         self.credential = ClientSecretCredential(tenant_id=self.credential_param[self.vm_name]["tenant_id"],
