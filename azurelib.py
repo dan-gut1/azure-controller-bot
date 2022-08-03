@@ -12,13 +12,14 @@ class AzureHandler:
         self.credential_param = self.load_credential_param()
         if vm_name not in self.credential_param.keys():
             raise KeyError(f"Can't find Azure VM or account called: {vm_name} in azure_param file")
-        self.vm_name = self.credential_param[vm_name]["vm_name"]
-        self.locataion = self.credential_param[self.vm_name]["location"]
-        self.resource_group_name = self.credential_param[self.vm_name]["group_name"]
-        self.credential = ClientSecretCredential(tenant_id=self.credential_param[self.vm_name]["tenant_id"],
-                                                 client_id=self.credential_param[self.vm_name]["client_id"],
-                                                 client_secret=self.credential_param[self.vm_name]["client_secret"])
-        self.compute_client = ComputeManagementClient(self.credential, self.credential_param[self.vm_name]["subscription_id"])
+        self.param_key = vm_name
+        self.vm_name = self.credential_param[self.param_key]["vm_name"]
+        self.locataion = self.credential_param[self.param_key]["location"]
+        self.resource_group_name = self.credential_param[self.param_key]["group_name"]
+        self.credential = ClientSecretCredential(tenant_id=self.credential_param[self.param_key]["tenant_id"],
+                                                 client_id=self.credential_param[self.param_key]["client_id"],
+                                                 client_secret=self.credential_param[self.param_key]["client_secret"])
+        self.compute_client = ComputeManagementClient(self.credential, self.credential_param[self.param_key]["subscription_id"])
 
 
     def __enter__(self):
