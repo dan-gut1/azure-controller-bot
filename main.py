@@ -115,8 +115,8 @@ def send_rereg_request(context: CallbackContext):
         # If user is registered, send re-register notification if user "last_log" is higher eq then SEND_RENEW_REG
         if validating_user["registered"] and int(current_user_log_time) >= SEND_RENEW_REG - (5 * 60):
             context.bot.send_message(chat_id=validating_user["user_id"],
-                                     text=f"Dear user, please re-register yourself in the next 5 minutes"
-                                          f"in order to keep the vm up and running."
+                                     text=f"Dear user, please re-register yourself in the next 5 minutes\n"
+                                          f"in order to keep the vm up and running.\n"
                                           f"you are logged for: {int(current_user_log_time) / 60} minutes." 
                                           f"/reg")
         # create shutdown job only if at last one user is
@@ -130,21 +130,21 @@ def automated_stop_vm(context: CallbackContext):
      if no one answered stopping the vm"""
     count_online_users = 0
     user_dict = context.bot_data["users"]
-    with AzureHandler("vm_name") as vm:
-        # Span over registered users and checks if need to log them off.
-        for username in user_dict.keys():
-            if user_dict[username]["registered"]:
-                # in case user is away more then AFK parameter then user is flagged logout and send message to user.
-                if (time.time() - user_dict[username]["last_login"]) > (USER_IS_AFK - 60):
-                    context.bot_data["users"][username]["registered"] = False
-                    context.bot.send_message(chat_id=user_dict[username]["user_id"], text="You didn't respond previous\
-                                                                                     message you are now logged-off")
-                else:
-                    count_online_users += 1
+    # Span over registered users and checks if need to log them off.
+    for username in user_dict.keys():
+        if user_dict[username]["registered"]:
+            # in case user is away more then AFK parameter then user is flagged logout and send message to user.
+            if (time.time() - user_dict[username]["last_login"]) > (USER_IS_AFK - 60):
+                context.bot_data["users"][username]["registered"] = False
+                context.bot.send_message(chat_id=user_dict[username]["user_id"], text="You didn't respond previous\
+                                                                                 message you are now logged-off")
+            else:
+                count_online_users += 1
 
         if count_online_users == 0:
             print("automatically shutting down the vm")
-            vm.stop_vm()
+            with AzureHandler(DEFAULT_VM_NAME) as vm:
+                vm.stop_vm()
 
 
     # Case all users are logged off the vm can be shutdown and de-allocated.
