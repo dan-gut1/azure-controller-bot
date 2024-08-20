@@ -20,3 +20,5 @@ set the bot up.
 2. run: pip install -r requirements.txt
 3. recommended: set the main.py as system service that startup on boot.
 4. congratulations: you on the budget now.
+
+# I don't have azure access anymore this code is out of maintenance, I Don't mind to help you if youwill give me access or API Key.
